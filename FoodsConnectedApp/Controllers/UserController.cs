@@ -20,10 +20,11 @@ namespace FoodsConnectedApp.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-            return await _context.Users.ToListAsync();
+            return await _context.Users.OrderBy(e => e.Id).ToListAsync();
         }
 
         //GET: api/Users/<id>
+        //Extra get request to get a singular user
         [HttpGet("{id}")]
         public async Task<ActionResult<User>> GetUser(int id)
         {
@@ -39,9 +40,9 @@ namespace FoodsConnectedApp.Controllers
 
         //PUT: api/Users/<id>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutUser(int id, User user) 
+        public async Task<IActionResult> PutUser(int id, User user)
         {
-            
+
             if (id != user.Id)
             {
                 return BadRequest();
@@ -58,7 +59,7 @@ namespace FoodsConnectedApp.Controllers
             {
                 await _context.SaveChangesAsync();
             }
-            catch(DbUpdateConcurrencyException)
+            catch (DbUpdateConcurrencyException)
             {
                 if (!UserExists(id))
                 {
@@ -80,7 +81,7 @@ namespace FoodsConnectedApp.Controllers
             if (containsItem)
             {
                 throw new Exception("Username already taken.");
-            } 
+            }
             else
             {
                 _context.Users.Add(user);
@@ -109,17 +110,11 @@ namespace FoodsConnectedApp.Controllers
         }
 
         //Check if user exists
-        private bool UserExists(int id) 
+        private bool UserExists(int id)
         {
             return _context.Users.Any(e => e.Id == id);
         }
 
-        private bool UsernameTaken(string name)
-        {
-            return _context.Users.Any(e => e.Username == name);
-        }
 
-
-        
     }
 }
